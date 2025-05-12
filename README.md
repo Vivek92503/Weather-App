@@ -12,10 +12,10 @@ A weather app showing current conditions and forecasts using OpenWeatherMap API 
 - [Screenshots](#screenshots)
 - [License](#license)
 
-# 📌 Introduction 
+# Introduction 
 This weather application provides real-time weather data and 5-day forecasts for any location worldwide. Users can search by city or use GPS for automatic location detection. The app displays temperature (with °C/°F toggle), humidity, wind speed, and weather conditions with visual icons. Built with HTML, CSS, and JavaScript, it uses the OpenWeatherMap API and features a clean, responsive design suitable for all devices. Perfect for quick weather checks.
 
-# 🚀 Features
+# Features
 - Current weather conditions
 - 5-day forecast
 - Location-based weather
@@ -23,7 +23,7 @@ This weather application provides real-time weather data and 5-day forecasts for
 - Weather icons
 - Responsive design
 
-# 🛠️ Technologies Used
+# Technologies Used
 ### 1. Frontend   
 - HTML5
 - CSS3
@@ -37,7 +37,7 @@ This weather application provides real-time weather data and 5-day forecasts for
 - Font Awesome (v6) - Weather icons
 - Google Fonts - Typography
 
-# ⚙️ Setup Instructions
+# Setup Instructions
 
 ### 1. Get an API Key
 1. Go to [OpenWeatherMap](https://openweathermap.org/)
@@ -73,7 +73,7 @@ This weather application provides real-time weather data and 5-day forecasts for
 - Make sure you've allowed browser location permissions
 - Try searching by city name instead
 
-# 📸 Screenshots
+# Screenshots
 
 ![Screenshot (281)](https://github.com/user-attachments/assets/a7c7b3ac-c82e-4b70-81ca-ead480e14923)
 ![Screenshot (282)](https://github.com/user-attachments/assets/1a40cb3b-f39f-4345-8197-adfbd9e582a1)
@@ -81,7 +81,7 @@ This weather application provides real-time weather data and 5-day forecasts for
 ![Screenshot (284)](https://github.com/user-attachments/assets/87cc40c6-411d-4984-9572-e76bced82177)
 ![Screenshot (286)](https://github.com/user-attachments/assets/ef11b618-5039-4203-98f4-6653b9318907)
 
-# 🧾 License
+# License
 
 This project is licensed under the [MIT License](opensource.org/licenses/MIT).
 
