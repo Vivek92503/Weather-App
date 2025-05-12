@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Weather App</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div class="weather-container">
+    <h1>Weather App</h1>
+    <input type="text" id="locationInput" placeholder="Enter city name" />
+    <div class="button-group">
+      <button onclick="getWeather()">Get Weather</button>
+      <button onclick="getLocationWeather()">
+        <i class="fas fa-location-arrow"></i> Current Location
+      </button>
+      <button id="unitToggle" onclick="toggleUnits()">
+        <i class="fas fa-temperature-low"></i> Switch to °F
+      </button>
+    </div>
+    <div id="weatherResult"></div>
+    <div id="forecastResult"></div>
+  </div>
+
+  <script>
+    const apiKey = 'Your_API_Key';  // Replace with your OpenWeatherMap API key
+    let isCelsius = true;
+
+    // Load last searched location if available
+    document.addEventListener('DOMContentLoaded', () => {
+      const lastLocation = localStorage.getItem('lastLocation');
+      if (lastLocation) {
+        document.getElementById('locationInput').value = lastLocation;
+        getWeather();
+      }
+    });
+
+    function getWeather() {
+      const location = document.getElementById('locationInput').value.trim();
+      if (!location) {
+        alert('Please enter a location');
+        return;
+      }
+
+      // Save to local storage
+      localStorage.setItem('lastLocation', location);
+
+      const weatherResult = document.getElementById('weatherResult');
+      weatherResult.innerHTML = '<div class="loading"></div>';
+      document.getElementById('forecastResult').innerHTML = '';
+
+      fetch(`https://api.openweathermap.org/data/2.5/weather?q=${location}&appid=${apiKey}&units=metric`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then(data => {
+          if (data.cod !== 200) {
+            throw new Error(data.message || 'Unknown error');
+          }
+          
+          const weatherHtml = `
+            <h2>${data.name}, ${data.sys.country}</h2>
+            <div class="weather-icon">${getWeatherIcon(data.weather[0].main)}</div>
+            <div class="temp">${Math.round(data.main.temp)}°C</div>
+            <p><strong>${data.weather[0].main}</strong>: ${data.weather[0].description}</p>
+            <div class="details">
+              <p><i class="fas fa-tint"></i> Humidity: ${data.main.humidity}%</p>
+              <p><i class="fas fa-wind"></i> Wind: ${data.wind.speed} m/s</p>
+              <p><i class="fas fa-temperature-low"></i> Feels like: ${Math.round(data.main.feels_like)}°C</p>
+            </div>
+          `;
+          weatherResult.innerHTML = weatherHtml;
+          getForecast(location);
+        })
+        .catch(error => {
+          console.error('Error fetching weather data:', error);
+          weatherResult.innerHTML = `<p class="error">Error: ${error.message}</p>`;
+        });
+    }
+
+    function getLocationWeather() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const { latitude, longitude } = position.coords;
+            document.getElementById('locationInput').value = 'Current Location';
+            document.getElementById('weatherResult').innerHTML = '<div class="loading"></div>';
+            document.getElementById('forecastResult').innerHTML = '';
+            
+            fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=metric`)
+              .then(response => response.json())
+              .then(data => {
+                const weatherHtml = `
+                  <h2>${data.name}, ${data.sys.country}</h2>
+                  <div class="weather-icon">${getWeatherIcon(data.weather[0].main)}</div>
+                  <div class="temp">${Math.round(data.main.temp)}°C</div>
+                  <p><strong>${data.weather[0].main}</strong>: ${data.weather[0].description}</p>
+                  <div class="details">
+                    <p><i class="fas fa-tint"></i> Humidity: ${data.main.humidity}%</p>
+                    <p><i class="fas fa-wind"></i> Wind: ${data.wind.speed} m/s</p>
+                  </div>
+                `;
+                document.getElementById('weatherResult').innerHTML = weatherHtml;
+                getForecastByCoords(latitude, longitude);
+              })
+              .catch(error => {
+                console.error("Error:", error);
+                document.getElementById('weatherResult').innerHTML = '<p>Error getting weather data.</p>';
+              });
+          },
+          (error) => {
+            console.error("Geolocation error:", error);
+            document.getElementById('weatherResult').innerHTML = 
+              '<p>Allow location access for current weather or search manually.</p>';
+          }
+        );
+      } else {
+        alert("Geolocation is not supported by your browser");
+      }
+    }
+
+    function toggleUnits() {
+      isCelsius = !isCelsius;
+      const tempElements = document.querySelectorAll('.temp');
+      
+      tempElements.forEach(tempElement => {
+        if (tempElement) {
+          const currentTemp = parseFloat(tempElement.textContent);
+          tempElement.textContent = isCelsius 
+            ? `${currentTemp}°C` 
+            : `${(currentTemp * 9/5 + 32).toFixed(1)}°F`;
+        }
+      });
+      
+      // Update button text
+      const unitToggleBtn = document.getElementById('unitToggle');
+      if (unitToggleBtn) {
+        unitToggleBtn.innerHTML = isCelsius 
+          ? '<i class="fas fa-temperature-low"></i> Switch to °F' 
+          : '<i class="fas fa-temperature-low"></i> Switch to °C';
+      }
+    }
+
+    function getForecast(location) {
+      fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${location}&appid=${apiKey}&units=metric`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.cod !== "200") {
+            throw new Error(data.message || 'Forecast not available');
+          }
+          
+          let forecastHtml = '<h3>5-Day Forecast</h3><div class="forecast-container">';
+          
+          // Get daily forecast (API returns 3-hour intervals)
+          const dailyForecasts = data.list.filter(item => item.dt_txt.includes("12:00:00"));
+          
+          dailyForecasts.forEach(day => {
+            forecastHtml += `
+              <div class="forecast-day">
+                <p>${new Date(day.dt_txt).toLocaleDateString('en', { weekday: 'short' })}</p>
+                <div class="weather-icon-small">${getWeatherIcon(day.weather[0].main)}</div>
+                <p>${Math.round(day.main.temp)}°${isCelsius ? 'C' : 'F'}</p>
+              </div>
+            `;
+          });
+          
+          forecastHtml += '</div>';
+          document.getElementById('forecastResult').innerHTML = forecastHtml;
+        })
+        .catch(error => {
+          console.error("Forecast error:", error);
+          document.getElementById('forecastResult').innerHTML = '<p>Forecast not available</p>';
+        });
+    }
+
+    function getForecastByCoords(lat, lon) {
+      fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.cod !== "200") {
+            throw new Error(data.message || 'Forecast not available');
+          }
+          
+          let forecastHtml = '<h3>5-Day Forecast</h3><div class="forecast-container">';
+          
+          const dailyForecasts = data.list.filter(item => item.dt_txt.includes("12:00:00"));
+          
+          dailyForecasts.forEach(day => {
+            forecastHtml += `
+              <div class="forecast-day">
+                <p>${new Date(day.dt_txt).toLocaleDateString('en', { weekday: 'short' })}</p>
+                <div class="weather-icon-small">${getWeatherIcon(day.weather[0].main)}</div>
+                <p>${Math.round(day.main.temp)}°${isCelsius ? 'C' : 'F'}</p>
+              </div>
+            `;
+          });
+          
+          forecastHtml += '</div>';
+          document.getElementById('forecastResult').innerHTML = forecastHtml;
+        })
+        .catch(error => {
+          console.error("Forecast error:", error);
+          document.getElementById('forecastResult').innerHTML = '<p>Forecast not available</p>';
+        });
+    }
+
+    function getWeatherIcon(weatherCondition) {
+      const condition = weatherCondition.toLowerCase();
+      if (condition.includes('cloud')) return '<i class="fas fa-cloud"></i>';
+      if (condition.includes('rain')) return '<i class="fas fa-cloud-rain"></i>';
+      if (condition.includes('clear')) return '<i class="fas fa-sun"></i>';
+      if (condition.includes('snow')) return '<i class="far fa-snowflake"></i>';
+      if (condition.includes('thunder')) return '<i class="fas fa-bolt"></i>';
+      if (condition.includes('fog') || condition.includes('mist')) return '<i class="fas fa-smog"></i>';
+      return '<i class="fas fa-cloud-sun"></i>';
+    }
+  </script>
+</body>
+</html>
