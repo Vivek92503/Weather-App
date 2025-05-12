@@ -1,4 +1,4 @@
-![Screenshot (281)](https://github.com/user-attachments/assets/b25a3137-0661-414b-8361-dc132bb6924b)# 🌦️ Weather App 
+# 🌦️ Weather App 
 
 A weather app showing current conditions and forecasts using OpenWeatherMap API with location detection and temperature unit toggle.
 
@@ -74,10 +74,12 @@ This weather application provides real-time weather data and 5-day forecasts for
 - Try searching by city name instead
 
 # 📸 Screenshots
-![Screenshot (281)](https://github.com/user-attachments/assets/5897f16f-852d-49ad-9e17-340f30d41041)
-![Screenshot (282)](https://github.com/user-attachments/assets/6c9b35c7-dec7-4a4c-a331-332642799e0e)
-![Screenshot (283)](https://github.com/user-attachments/assets/2884e730-00be-4852-8ef2-155d621c79ca)
 
+![Screenshot (281)](https://github.com/user-attachments/assets/a7c7b3ac-c82e-4b70-81ca-ead480e14923)
+![Screenshot (282)](https://github.com/user-attachments/assets/1a40cb3b-f39f-4345-8197-adfbd9e582a1)
+![Screenshot (283)](https://github.com/user-attachments/assets/a7e90875-f3bd-4a58-905a-8980440b47f9)
+![Screenshot (284)](https://github.com/user-attachments/assets/87cc40c6-411d-4984-9572-e76bced82177)
+![Screenshot (286)](https://github.com/user-attachments/assets/ef11b618-5039-4203-98f4-6653b9318907)
 
 # 🧾 License
 
