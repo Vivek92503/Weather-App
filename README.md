@@ -2,7 +2,7 @@
 
 A weather app showing current conditions and forecasts using OpenWeatherMap API with location detection and temperature unit toggle.
 
-## Table of Contents
+# Table of Contents
 - [Introduction](#introduction)
 - [Features](#features)
 - [Technologies Used](#technologies-used)
