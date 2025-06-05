@@ -1,6 +1,6 @@
 # 🌦️ Weather App 
 
-A weather app showing current conditions and forecasts using OpenWeatherMap API with location detection and temperature unit toggle.
+A weather app showing current conditions and forecasts using OpenWeatherMap API with location detection and temperature unit toggle.jjj
 
 # Table of Contents
 - [Introduction](#introduction)
